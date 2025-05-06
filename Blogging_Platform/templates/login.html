@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="icon" type="image/png" href="{{url_for('static',filename='logo.jpg')}}">
+    <style>
+        body{
+            font-family:Arial, sans-serif;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            height:100vh;
+            background-image:url("{{ url_for('static', filename='outer_background.jpg') }}");
+            background-size:cover;
+            background-position:center;
+            background-attachment:fixed;
+        }
+
+        .container{
+            background-image:url("{{url_for('static', filename='background.jpg')}}");
+            background-size:cover;
+            background-position:center;
+            background-color:rgba(255, 255, 255, 0.9);
+            padding:30px;
+            border-radius:8px;
+            box-shadow:0px 4px 12px rgba(0, 0, 0, 0.1);
+            width:400px;
+            animation:slideDown 1s ease-out;
+        }
+
+        @keyframes slideDown{
+            from{
+                opacity:0;
+                transform:translateY(-50px);
+            }
+            to{
+                opacity:1;
+                transform:translateY(0);
+            }
+        }
+
+        .form-group{
+            margin-bottom:15px;
+        }
+
+        input{
+            width:100%;
+            padding:10px;
+            font-size:14px;
+            border:1px solid #ccc;
+            border-radius:4px;
+        }
+
+        button{
+            width:100%;
+            padding:10px;
+            background-color:#6bbf59;
+            color:white;
+            border:none;
+            border-radius:4px;
+            font-size:16px;
+            cursor:pointer;
+            transition:background-color 0.3s ease,transform 0.3s ease;
+        }
+
+        button:hover{
+            background-color:#5aa74f;
+            transform:translateY(-2px);
+        }
+
+        .signup-link{
+            text-align:center;
+            margin-top:10px;
+        }
+
+        .signup-link a{
+            color:#6bbf59;
+            text-decoration:none;
+        }
+
+        .signup-link a:hover{
+            color:#5aa74f;
+        }
+
+        .alert-container{
+            margin-top:10px;
+        }
+
+        .alert{
+            padding:10px;
+            border-radius:4px;
+            margin-bottom:10px;
+            opacity:1;
+            transition: opacity 1s ease-out;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h2>Login</h2>
+
+        {% with messages=get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="alert-container">
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{message}}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+        {% endwith %}
+
+        <form method="POST" action="{{url_for('login')}}">
+            <div class="form-group">
+                <label for="email"><b>Email</b></label>
+                <input type="email" id="email" name="email" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="password"><b>Password</b></label>
+                <input type="password" id="password" name="password" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label for="role">Select Role:</label>
+                <select name="role" id="role" class="form-control" required>
+                    <option value="" {% if not selected_role %}selected{% endif %}>Choose Role</option>
+                    <option value="user" {% if selected_role == "user" %}selected{% endif %}>User</option>
+                    <option value="admin" {% if selected_role == "admin" %}selected{% endif %}>Admin</option>
+                </select>
+            </div>
+            <button type="submit"><b>Login</b></button>
+        </form>
+<span><b>Don't have an account?</b></span>
+<a href="{{url_for('signup')}}" style="text-decoration: none;">Sign Up</a>
+    <script>
+        setTimeout(function(){
+            var alerts=document.querySelectorAll(".alert");
+            alerts.forEach(function (alert) {
+                alert.style.opacity="0";
+                setTimeout(function(){
+                    alert.style.display="none";
+                },1000);
+            });
+        },3000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<style>
+body {
+    font-family: 'Arial', sans-serif;
+    background-size: cover;
+    margin: 0;
+    padding: 0;
+}
+.feedback-container {
+    background: rgba(255, 255, 255, 0.6);
+    padding: 30px;
+    border-radius: 10px;
+    width: 50%;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+.form-title {
+    text-align: center;
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+</style>
+
+<div class="container">
+  <div class="d-flex justify-content-center align-items-center min-vh-100">
+    <div class="feedback-container">
+      <h1 class="form-title">📢Feedback Form</h1>
+
+      <form method="POST" class="d-flex flex-column gap-3">
+        {% csrf_token %}
+        
+        <!-- Display validation errors (if any) -->
+        {{ form.non_field_errors }}
+
+        <!-- First Name Field -->
+        <div class="mb-3">
+          <label class="form-label"><b>First Name:</b></label>
+          {{ form.first_name }}
+          {% if form.first_name.errors %}
+            <div class="invalid-feedback">
+              {% for error in form.first_name.errors %}
+                <p>{{ error }}</p>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+      
+        <!-- Last Name Field -->
+        <div class="mb-3">
+          <label class="form-label"><b>Last Name:</b></label>
+          {{ form.last_name }}
+          {% if form.last_name.errors %}
+            <div class="invalid-feedback">
+              {% for error in form.last_name.errors %}
+                <p>{{ error }}</p>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+      
+        <!-- Email Field -->
+        <div class="mb-3">
+          <label class="form-label"><b>Email ID:</b></label>
+          {{ form.email }}
+          {% if form.email.errors %}
+            <div class="invalid-feedback">
+              {% for error in form.email.errors %}
+                <p>{{ error }}</p>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+      
+        <!-- Rating Field -->
+        <div class="mb-3">
+          <label class="form-label"><b>Rate Us:</b></label>
+          {{ form.rating }}
+        </div>
+      
+        <!-- Feedback Message Field -->
+        <div class="mb-3">
+          <label class="form-label"><b>Your Feedback:</b></label>
+          {{ form.feedback_message }}
+          {% if form.feedback_message.errors %}
+            <div class="invalid-feedback">
+              {% for error in form.feedback_message.errors %}
+                <p>{{ error }}</p>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="btn btn-primary w-100" onclick="return confirm('Are You Sure?');">
+          <b>Submit Feedback</b>
+        </button>
+      </form>
+      
+    </div>
+  </div>
+</div>
+{% endblock %}

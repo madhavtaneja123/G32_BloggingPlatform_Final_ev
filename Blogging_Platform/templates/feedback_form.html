@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Feedback Form</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="icon" type="image/png" href="{{url_for('static',filename='logo.jpg')}}">
+  <style>
+body{
+    font-family:'Arial',sans-serif;
+    background-color:#f8f9fa;
+    margin:0;
+    padding:0;
+    background-image: url(../static/outer_background.jpg);
+    background-size: cover;
+    position: center;
+}
+.navbar{
+    background-color:black !important;
+    padding:15px 20px;
+    box-shadow:0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+.navbar-brand img{
+    height:50px;
+    width:auto;
+}
+.navbar h1{
+    color:white;
+    font-size:30px;
+    font-weight:bold;
+    margin:0 auto;
+    text-align:center;
+    position:absolute;
+    left:50%;
+    transform:translateX(-50%);
+}
+.navbar-nav .nav-link{
+    color:white !important;
+    font-size:18px;
+    display:flex;
+    align-items:center;
+    gap:5px;
+    transition:0.3s ease-in-out;
+}
+.navbar-nav .nav-link:hover{
+    color:#ffe600 !important;
+    transform:scale(1.05);
+}
+.alert{
+    max-width:600px;
+    margin:0 auto;
+}
+@media(max-width:992px){
+    .navbar h1{
+        position:static;
+        transform:none;
+        margin:10px auto;
+        text-align:center;
+    }
+}
+@media(max-width:768px){
+    .navbar{
+        flex-direction:column;
+        text-align:center;
+    }
+    .navbar-nav{
+        text-align:center;
+    }
+    .navbar-nav .nav-link{
+        justify-content:center;
+    }
+}
+.feedback-container{
+    background:rgba(255,255,255,0.6);
+    padding:30px;
+    border-radius:10px;
+    width:50%;
+    box-shadow:0px 4px 10px rgba(0,0,0,0.1);
+    display:flex;
+    flex-direction:column;
+    gap:20px;
+    opacity: 10;
+}
+.form-title{
+text-align:center;
+font-size:2rem;
+font-weight:bold;
+margin-bottom:20px;
+}
+.container{
+  background-position:center;
+  background-size:cover;
+  background-repeat:no-repeat ;
+}
+  </style>
+</head>
+<body>
+
+  <nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">
+        <img src="{{url_for('static',filename='faviconimg.png')}}" alt="Logo">
+      </a>
+      <button class="navbar-toggler"type="button"data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <h1 class="text-white fs-5 fw-bold position-absolute start-50 translate-middle-x">BlogBuzz</h1>
+      <div class="collapse navbar-collapse justify-content-end" id="navbarNavDropdown">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+              <a class="nav-link" href="{{url_for('index')}}">
+                  <b>Home</b></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{url_for('categories')}}">
+                <b>Category</b></a>
+        </li>
+          <li class="nav-item">
+              <a class="nav-link" href="{{url_for('create_blogs')}}">
+                  <b>Create Blogs</b></a>
+          </li>
+          <li class="nav-item">
+              <a class="nav-link" href="{{url_for('contact')}}">
+                  <b>Contact Us</b></a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container" style="background-image: url(../static/background.jpg);">
+ 
+<div class="d-flex justify-content-center align-items-center min-vh-100 bg-image">
+    <div class="feedback-container">
+      <h1 class="form-title">📢Feedback Form</h1>
+
+      <form method="POST" action="{{url_for('submit_feedback')}}" class="d-flex flex-column gap-3">
+        <div class="mb-3">
+          <label class="form-label"><b>First Name:</b></label>
+          <input type="text" class="form-control" name="first_name" required>
+        </div>
+        <div class="mb-3">
+          <label class="form-label"><b>Last Name:</b></label>
+          <input type="text" class="form-control" name="last_name" required>
+          </div>
+
+<div class="mb-3">
+  <label class="form-label"><b>Email ID:</b></label>
+<input type="email" class="form-control" name="email" required>
+</div>
+
+    <div class="mb-3">
+        <label class="form-label"><b>Rate Us:</b></label>
+        <select class="form-select" name="rating">
+          <option value="5">⭐⭐⭐⭐⭐</option>
+          <option value="4">⭐⭐⭐⭐</option>
+          <option value="3">⭐⭐⭐</option>
+          <option value="2">⭐⭐</option>
+          <option value="1">⭐</option>
+        </select>
+      </div>
+    
+      <div class="mb-3">
+        <label class="form-label"><b>Your Feedback:</b></label>
+<textarea class="form-control" name="feedback_message" rows="4" required></textarea>
+      </div>
+
+<button type="submit" class="btn btn-primary w-100" onclick="return confirm('Are You Sure?');"><b>Submit Feedback</b></button>
+</form>
+</div>
+</div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

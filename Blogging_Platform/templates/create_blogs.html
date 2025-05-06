@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %} Create Blogs {% endblock %}
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center"><b>Create Your blog</b></h1>
+<form method="POST">
+<div class="mb-3">
+    <label class="form-label"><b>Author Name:</b></label>
+    <input type="text" class="form-control" name="author_name" required>
+</div>
+<div class="mb-3">
+    <label class="form-label"><b>Author Email:</b></label>
+    <input type="email" class="form-control" name="author_email" required>
+</div>
+<div class="mb-3">
+    <label class="form-label"><b>Blog Title:</b></label>
+    <input type="text" class="form-control" name="title" required>
+</div>
+<div class="mb-3">
+    <label class="form-label"><b>Category:</b></label>
+    <input type="text" class="form-control" name="category" id="category" required>
+</div>
+<div class="mb-3">
+    <label class="form-label"><b>Content:</b></label>
+    <textarea class="form-control" rows="7" name="content" required></textarea>
+</div>
+<div>
+<button type="submit" class="btn w-100" style="background-color:rgb(243,92,75);"><b>Publish Your Blog</b></button>
+</form>
+</div>
+</div>
+{% endblock %}

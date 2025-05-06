@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet"
+    href="./https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <title>Contact Us</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="icon" type="image/png" href="{{url_for('static',filename='logo.jpg')}}">
+    <style>
+
+        body{
+            font-family:'Arial',sans-serif;
+            background-repeat:no-repeat;
+            background-size:cover;
+            background-position:center;
+            margin:0;
+            padding:0;
+        }
+
+.navbar{
+    background-color:#000409 !important;
+    padding:15px 5px;
+    position:relative;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    height:12vh;
+}
+
+.navbar-brand img{
+    height:50px;
+    width:auto;
+}
+
+.navbar h1{
+    color:white;
+    font-size:30px;
+    font-weight:bold;
+    margin:0;
+    text-align:center;
+    position:absolute;
+    left:50%;
+    transform:translateX(-50%);
+}
+
+.navbar-nav{
+    display:flex;
+    justify-content:flex-end;
+    width:100%;
+}
+
+.navbar-nav .nav-link{
+    color:white !important;
+    font-size:18px;
+    display:flex;
+    align-items:center;
+    gap:5px;
+    transition:0.3s ease-in-out;
+    padding:5px 10px;
+}
+
+.navbar-nav .nav-link:hover {
+    color:#ffe600 !important;
+    transform:scale(1.05);
+}
+
+@media (max-width: 768px){
+    .navbar{
+        flex-direction:column;
+        text-align:right;
+    }
+
+    .navbar-nav{
+        width:100%;
+        justify-content:center;
+    }
+
+    .navbar-nav .nav-link{
+        justify-content:center;
+    }
+}
+
+
+        .navbar-nav .nav-link:hover{
+            color:#ffe600 !important;
+            transform:scale(1.05);
+        }
+
+        .header-image{
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            width:100%;
+            height:60vh;
+            background-color:#142c47;
+            padding:20px;
+            margin-top:1;
+        }
+
+        .header-image img{
+            width:45vw;
+            height:50vh;
+            padding:20px;
+        }
+
+        .header-text{
+            text-align:right;
+            color:white;
+            padding:15vw;
+        }
+
+        .header-image h1{
+            font-size:70px;
+            font-weight:bold;
+        }
+
+        .header-image p{
+            font-size:25px;
+        }
+
+        .contact-section{
+            padding:50px 20px;
+            background:#f4f4f4;
+            width:100%;
+        }
+
+        .contact-section h1{
+            text-align:center;
+            font-size:36px;
+            color:#333;
+        }
+
+        .contact-section p{
+            text-align:center;
+            font-size:18px;
+            color:#666;
+            margin-bottom:30px;
+        }
+
+        .contact-container{
+            display:flex;
+            justify-content:center;
+            gap:20px;
+            margin-top:20px;
+            text-decoration: none;
+        }
+
+        .contact-card {
+            background:white;
+            padding:20px;
+            border-radius:8px;
+            box-shadow:0 0 10px rgba(0, 0, 0, 0.1);
+            width:300px;
+            text-align:center;
+        }
+
+        .contact-card h2{
+            color:#333;
+            font-size:24px;
+        }
+
+        .contact-card p{
+            font-size:16px;
+            color:#555;
+            margin-bottom:20px;
+        }
+
+        .contact-card a{
+            color:#ff5c35;
+            text-decoration:none;
+            font-weight:bold;
+            display:block;
+            margin-top:10px;
+        }
+
+        .contact-card a:hover{
+            color:#e14a2c;
+        }
+
+        footer{
+            background:#142c47;
+            color:white;
+            text-align:center;
+            width:100%;
+            background-color:#f8f9fa;
+            padding:20px 0;
+            text-align:center;
+            margin-top:30px;
+        }
+
+        footer p{
+            margin:0;
+            font-size:16px;
+        }
+        .my-element{
+    animation:fadeInUp 1s ease-out;
+}
+
+
+@keyframes fadeInUp{
+    0%{
+        opacity:0;
+        transform: translateY(20px);
+    }
+    100%{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+.my-element{
+    animation:fadeInUp 1s ease-out;
+}
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <img src="{{url_for('static',filename='faviconimg.png')}}" alt="Logo">
+            </a>
+            <h1 class="text-white fs-5 fw-bold">BlogBuzz</h1>
+            <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{url_for('index')}}"><b>Home</b></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{url_for('about')}}"><b>About Us</b></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{url_for('categories')}}"><b>Category</b></a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="header-image">
+        <img src="{{url_for('static',filename='contact.jpg')}}" alt="Header Image">
+        <div class="header-text">
+            <h1 class="my-element">Get in touch</h1>
+            <p class="my-element">Want to get in touch? We'd love to hear from you. Here's how you can reach us.</p>
+        </div>
+    </div>
+    <section class="contact-section">
+        <div class="contact-container">
+      <a href="{{url_for('feedback')}}">
+            <div class="contact-card">
+                <span class="phone-icon">📋</span>
+                <h2>Provide Feedback</h2>
+                <p>You can provide us your valuable feedback by clicking on this box.</p>
+            </div>
+        </a>
+            <div class="contact-card">
+                <a href="https://mail.google.com/mail/?view=cm&fs=1&to=blogbuzz138@gmail.com">
+                <span class="support-icon">✉</span>
+                <h2>Email</h2>
+                <p>If you have any query,suggestion or complaint,then click here to email us.</p>
+            </a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; &reg; <B>BlogBuzz</B></p><br>
+        <nav aria-label="Page navigation example">
+            <ul class="pagination justify-content-center">
+              <li class="page-item">
+                <a class="page-link" href="#" aria-label="Previous">
+                  <span aria-hidden="true" style="color: black;">&laquo;</span>
+                </a>
+              </li>
+              <li class="page-item"><a class="page-link" href="{{url_for('index')}}" style="color: black;">1</a></li>
+              <li class="page-item"><a class="page-link" href="{{url_for('about')}}" style="color: black;">2</a></li>
+              <li class="page-item"><a class="page-link" href="{{url_for('categories')}}" style="color: black;">3</a></li>
+              <li class="page-item">
+                <a class="page-link" href="#" aria-label="Next">
+                  <span aria-hidden="true" style="color: black;">&raquo;</span>
+                </a>
+              </li>
+            </ul>      
+    </footer>
+</body>
+</html>
