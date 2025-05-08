@@ -73,6 +73,7 @@ class Blog(db.Model):
     created_at=db.Column(db.DateTime, default=db.func.current_timestamp())
     comments=db.relationship("Comment",backref="blog_comments",lazy=True,cascade="all,delete-orphan")
     likes=db.relationship("Like",backref="blog_likes",lazy=True, cascade="all,delete-orphan")
+    created_by_django = db.Column(db.Boolean, default=False)
 
 class Like(db.Model):
     id=db.Column(db.Integer,primary_key=True)
@@ -178,6 +179,7 @@ def display_blogs():
     all_blogs=Blog.query.order_by(Blog.created_at.desc()).all()
     return render_template("display_blogs.html",blogs=all_blogs)
 
+
 @app.route("/like_blog/<int:id>",methods=["POST"])
 @login_required
 def like_blog(id):
@@ -222,27 +224,6 @@ def edit_blog(id):
         flash("Blog updated successfully!","success")
         return redirect(url_for('display_blogs'))
     return render_template("edit_blog.html",blog=blog)
-
-@app.route('/api/blogs/<int:blog_id>', methods=['PUT'])
-def api_edit_blog(blog_id):
-    blog = Blog.query.get_or_404(blog_id)
-
-    data = request.get_json()
-
-    blog.title = data.get('title', blog.title)
-    blog.content = data.get('content', blog.content)
-    blog.author_name = data.get('author_name', blog.author_name)
-    blog.author_email = data.get('author_email', blog.author_email)
-
-    db.session.commit()
-    return jsonify({'message': 'Blog updated in Flask API'}), 200
-
-@app.route('/api/blogs/<int:blog_id>', methods=['DELETE'])
-def api_delete_blog(blog_id):
-    blog = Blog.query.get_or_404(blog_id)
-    db.session.delete(blog)
-    db.session.commit()
-    return jsonify({'message': 'Blog deleted from Flask API'}), 200
 
 @app.route("/comment_blog/<int:id>",methods=["POST"])
 @login_required
@@ -310,7 +291,7 @@ def editorial_policies():
 @app.route('/api/blogs', methods=['GET', 'POST'])
 def api_blogs():
     if request.method == 'GET':
-        blogs = Blog.query.order_by(Blog.created_at.desc()).all()
+        blogs = Blog.query.filter_by(created_by_django=True).order_by(Blog.created_at.desc()).all()
         blogs_data = [{
             'id': blog.id,
             'title': blog.title,
@@ -328,11 +309,33 @@ def api_blogs():
             content=data['content'],
             author_name=data['author_name'],
             author_email=data['author_email'],
-            category=data['category']
+            category=data['category'],
+            created_by_django=True
         )
         db.session.add(new_blog)
         db.session.commit()
         return jsonify({"message": "Blog created successfully", "id": new_blog.id}), 201
+
+@app.route('/api/blogs/<int:blog_id>', methods=['PUT'])
+def api_edit_blog(blog_id):
+    blog = Blog.query.get_or_404(blog_id)
+
+    data = request.get_json()
+
+    blog.title = data.get('title', blog.title)
+    blog.content = data.get('content', blog.content)
+    blog.author_name = data.get('author_name', blog.author_name)
+    blog.author_email = data.get('author_email', blog.author_email)
+
+    db.session.commit()
+    return jsonify({'message': 'Blog updated in Flask API'}), 200
+
+@app.route('/api/blogs/<int:blog_id>', methods=['DELETE'])
+def api_delete_blog(blog_id):
+    blog = Blog.query.get_or_404(blog_id)
+    db.session.delete(blog)
+    db.session.commit()
+    return jsonify({'message': 'Blog deleted from Flask API'}), 200
 
 @app.route('/api/feedbacks', methods=['GET', 'POST'])
 def api_feedbacks():

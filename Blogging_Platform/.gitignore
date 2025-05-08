@@ -1,5 +1,5 @@
-# Exclude virtual environment folder
-env/
-
-# Exclude database file
-app.db
+__pycache__/
+.vscode/
+*.pyc
+*.pyo
+*.log

@@ -59,69 +59,6 @@ def edit_profile(request):
         form = ProfileUpdateForm(instance=request.user.profile)
     return render(request, 'edit_profile.html', {'form': form})
 
-@login_required
-def blog_display(request):
-    try:
-        response = requests.get('http://localhost:5000/api/blogs')
-        if response.status_code == 200:
-            flask_blogs = response.json().get('blogs', [])
-
-            for f_blog in flask_blogs:
-                blog, created = Blog.objects.update_or_create(
-                    flask_blog_id=f_blog['id'],
-                    defaults={
-                        'title': f_blog['title'],
-                        'content': f_blog['content'],
-                        'author_name': f_blog['author_name'],
-                        'author_email': f_blog['author_email'],
-                        'category': f_blog['category'],
-                    }
-                )
-        else:
-            messages.warning(request, "Could not fetch blogs from Flask API.")
-    except requests.exceptions.RequestException as e:
-        messages.error(request, f"Flask API connection error: {e}")
-
-    blogs = Blog.objects.all().order_by('-created_at')
-    return render(request, 'blog_display.html', {'blogs': blogs})
-
-@login_required
-def blog_create(request):
-    if request.method == 'POST':
-        form = BlogForm(request.POST)
-        if form.is_valid():
-            if form.cleaned_data['author_name'] == request.user.username:
-                blog_data = {
-                    "title": form.cleaned_data['title'],
-                    "content": form.cleaned_data['content'],
-                    "category": form.cleaned_data['category'],
-                    "author_name": request.user.username,
-                    "author_email": request.user.email,
-                }
-
-                try:
-                    response = requests.post('http://localhost:5000/api/blogs', json=blog_data)
-                    if response.status_code == 201:
-                        flask_response = response.json()
-                        blog = form.save(commit=False)
-                        blog.flask_blog_id = flask_response.get('id')
-                        blog.save()
-
-                        messages.success(request, "Blog created successfully!")
-                        return redirect('blog_display')
-                    else:
-                        messages.error(request, f"Flask API failed: {response.text}")
-                except requests.exceptions.RequestException as e:
-                    messages.error(request, f"Could not connect to Flask API: {e}")
-            else:
-                messages.error(request, "You can only create a blog with your registered username.")
-    else:
-        form = BlogForm(initial={
-            'author_name': request.user.username,
-            'author_email': request.user.email,
-        })
-    return render(request, 'blog_create.html', {'form': form})
-
 def blog_detail(request, blog_id):
     blog = get_object_or_404(Blog, id=blog_id)
     if request.method == 'POST':
@@ -188,8 +125,64 @@ def like_blog(request, blog_id):
         return JsonResponse({'success': False}, status=400)
 
 @login_required
+def blog_display(request):
+    try:
+        response = requests.get('http://localhost:5000/api/blogs')
+        if response.status_code == 200:
+            flask_blogs = response.json().get('blogs', [])
+        else:
+            messages.warning(request, "Could not fetch blogs from Flask API.")
+    except requests.exceptions.RequestException as e:
+        messages.error(request, f"Flask API connection error: {e}")
+
+    return render(request, 'blog_display.html', {'blogs': flask_blogs})
+
+@login_required
+def blog_create(request):
+    if request.method == 'POST':
+        form = BlogForm(request.POST)
+        if form.is_valid():
+            if form.cleaned_data['author_name'] == request.user.username:
+                blog_data = {
+                    "title": form.cleaned_data['title'],
+                    "content": form.cleaned_data['content'],
+                    "category": form.cleaned_data['category'],
+                    "author_name": request.user.username,
+                    "author_email": request.user.email,
+                }
+
+                try:
+                    response = requests.post('http://localhost:5000/api/blogs', json=blog_data)
+                    if response.status_code == 201:
+                        flask_response = response.json()  
+                        messages.success(request, "Blog created successfully!")
+                        return redirect('blog_display')
+                    else:
+                        messages.error(request, f"Flask API failed: {response.text}")
+                except requests.exceptions.RequestException as e:
+                    messages.error(request, f"Could not connect to Flask API: {e}")
+            else:
+                messages.error(request, "You can only create a blog with your registered username.")
+    else:
+        form = BlogForm(initial={
+            'author_name': request.user.username,
+            'author_email': request.user.email,
+        })
+    return render(request, 'blog_create.html', {'form': form})
+
+
+@login_required
 def blog_edit(request, blog_id):
-    blog = get_object_or_404(Blog, id=blog_id)
+    try:
+        response = requests.get(f'http://localhost:5000/api/blogs/{blog_id}')
+        if response.status_code == 200:
+            flask_blog = response.json()
+        else:
+            messages.error(request, f"Blog not found in Flask API.")
+            return redirect('blog_display')
+    except requests.exceptions.RequestException as e:
+        messages.error(request, f"Flask API error: {e}")
+        return redirect('blog_display')
 
     if request.method == 'POST':
         title = request.POST.get('title')
@@ -197,54 +190,38 @@ def blog_edit(request, blog_id):
         author_name = request.POST.get('author_name')
         author_email = request.POST.get('author_email')
 
-        blog.title = title
-        blog.content = content
-        blog.author_name = author_name
-        blog.author_email = author_email
-        blog.save()
+        flask_blog_id = flask_blog.get('id')
+        flask_api_url = f'http://localhost:5000/api/blogs/{flask_blog_id}'
+        data = {
+            'title': title,
+            'content': content,
+            'author_name': author_name,
+            'author_email': author_email,
+        }
 
-        flask_blog_id = blog.flask_blog_id
-        if flask_blog_id:
-            flask_api_url = f'http://localhost:5000/api/blogs/{flask_blog_id}'
-            data = {
-                'title': title,
-                'content': content,
-                'author_name': author_name,
-                'author_email': author_email,
-            }
-            try:
-                response = requests.put(flask_api_url, json=data)
-                if response.status_code == 200:
-                    messages.success(request, "Blog updated successfully in both systems!")
-                else:
-                    messages.warning(request, f"Flask API update failed: {response.text}")
-            except requests.exceptions.RequestException as e:
-                messages.error(request, f"Flask API error: {e}")
+        try:
+            response = requests.put(flask_api_url, json=data)
+            if response.status_code == 200:
+                messages.success(request, "Blog updated successfully in Flask!")
+            else:
+                messages.warning(request, f"Flask API update failed: {response.text}")
+        except requests.exceptions.RequestException as e:
+            messages.error(request, f"Flask API error: {e}")
 
         return redirect('blog_display')
 
-    return render(request, 'blog_edit.html', {'blog': blog})
+    return render(request, 'blog_edit.html', {'blog': flask_blog})
 
 @login_required
 @csrf_exempt
 @require_POST
 def delete_blog(request, blog_id):
-    blog = None
     try:
-        blog = Blog.objects.get(id=blog_id)
-        flask_blog_id = blog.flask_blog_id or blog_id
-    except Blog.DoesNotExist:
-        flask_blog_id = blog_id
-    try:
-        response = requests.delete(f'http://localhost:5000/api/blogs/{flask_blog_id}')
+        response = requests.delete(f'http://localhost:5000/api/blogs/{blog_id}')
         if response.status_code == 200:
-            if blog:
-                blog.delete()
             return JsonResponse({'success': True})
         elif response.status_code == 404:
-            if blog:
-                blog.delete()
-            return JsonResponse({'success': True, 'warning': 'Flask blog was already deleted'})
+            return JsonResponse({'success': True, 'warning': 'Blog already deleted from Flask'})
         else:
             return JsonResponse({'success': False, 'error': 'Failed to delete from Flask'}, status=500)
     except requests.exceptions.RequestException as e:
@@ -300,24 +277,13 @@ def feedback_view(request):
                     'feedback_message': feedback_message
                 })
                 if response.status_code == 201:
-                    form.save()
                     return redirect('feedback_thanks')
                 else:
                     messages.error(request, "Flask API failed to save feedback.")
             except requests.exceptions.RequestException as e:
                 messages.error(request, f"Could not connect to Flask API: {e}")
     else:
-        if request.user.is_authenticated:
-            form = FeedbackForm(initial={
-                'first_name': request.user.first_name,
-                'last_name': request.user.last_name,
-                'email': request.user.email,
-            })
-            form.fields['first_name'].widget.attrs['readonly'] = True
-            form.fields['last_name'].widget.attrs['readonly'] = True
-            form.fields['email'].widget.attrs['readonly'] = True
-        else:
-            form = FeedbackForm()
+        form = FeedbackForm()
 
     return render(request, 'feedback.html', {'form': form})
 
@@ -354,6 +320,7 @@ def remove_bookmark(request, blog_id):
     if bookmark:
         bookmark.delete()
     return redirect('bookmark_list')
+
 
 @login_required
 def bookmark_list(request):

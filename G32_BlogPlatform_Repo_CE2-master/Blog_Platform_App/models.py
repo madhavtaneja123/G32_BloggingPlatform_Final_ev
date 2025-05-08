@@ -40,6 +40,7 @@ class Blog(models.Model):
     tags = models.CharField(max_length=200, blank=True)
     likes = models.PositiveIntegerField(default=0)
     flask_blog_id = models.IntegerField(null=True, blank=True,  unique=True)
+    created_by_django = models.BooleanField(default=False)
 
 class Comment(models.Model):
     blog = models.ForeignKey('Blog', on_delete=models.CASCADE, related_name='comments')
